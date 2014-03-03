@@ -1,0 +1,38 @@
+[global]
+port = /dev/ttyUSB1
+model = AT
+initlength = default
+connection = serial
+use_locking = yes
+serial_baudrate = 115200
+smsc_timeout = 10
+
+[flags]
+#RM-237=3110c, DEFAULT_S40_30
+
+[gnokii]
+gnokiierrorpath=/dev/null
+
+[xgnokii]
+allow_breakage = 0
+
+[gnokiid]
+bindir = /usr/local/sbin/
+
+[connect_script]
+TELEPHONE = 12345678
+
+[disconnect_script]
+
+[logging]
+debug = off
+rlpdebug = off
+xdebug = off
+
+[phone_fake]
+port = foobar
+model = fake
+connection = serial
+
+[fake_driver]
+sms_inbox = /tmp/sms

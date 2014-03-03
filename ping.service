@@ -1,0 +1,10 @@
+[Unit]
+Description=PingPongPingPong
+
+[Service]
+ExecStart=/bin/ping -c 1 8.8.8.8 -s 0
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

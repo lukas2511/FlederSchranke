@@ -1,0 +1,15 @@
+[Unit]
+Description=Lichtschranken Toolset
+ConditionPathExists=/home/root/lichtschranke/start.sh
+
+[Service]
+Type=oneshot
+ExecStart=/home/root/lichtschranke/start.sh
+StandardOutput=tty
+RemainAfterExit=yes
+SysVStartPriority=99
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
