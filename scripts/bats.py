@@ -102,13 +102,13 @@ def check_end():
         return False
     return True
 
-def got_data(data, timestamp):
+def got_data(data, timestamp, seperator):
     output = str()
     for i in range(0, _data_length):
         output += bin(ord(data[i])).zfill(8)
     output=output[:-4]
     ftime = init_time_relative + timestamp
-    logger.info("%d - %s" % (ftime,output));
+    logger.info("%s %d %s" % (seperator,ftime,output));
 
 while ser:
     seek_to_start()
@@ -127,7 +127,7 @@ while ser:
         elif not running:
             got_stupid_data("system not running")
         if check_end():
-            got_data(struct.unpack("=%ic" % (_data_length), data), timestamp)
+            got_data(struct.unpack("=%ic" % (_data_length), data), timestamp, seperator)
         else:
             got_stupid_data("failed at end")
     else:
