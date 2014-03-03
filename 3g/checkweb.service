@@ -1,0 +1,13 @@
+[Unit]
+Description=checkweb
+ConditionPathExists=/home/root/lichtschranke/3g/checkweb.py
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/3g
+ExecStart=/usr/bin/python checkweb.py
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
