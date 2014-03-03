@@ -1,0 +1,12 @@
+[Unit]
+Description=wakeupcall
+ConditionPathExists=/home/root/lichtschranke/wakeupcall/wakeupcall.py
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/wakeupcall
+ExecStart=/usr/bin/python wakeupcall.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

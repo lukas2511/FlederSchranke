@@ -1,0 +1,13 @@
+[Unit]
+Description=openvpn
+ConditionPathExists=/home/root/lichtschranke/openvpn/client.conf
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/openvpn
+ExecStart=/usr/local/sbin/openvpn --config client.conf
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

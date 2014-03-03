@@ -1,0 +1,13 @@
+[Unit]
+Description=bats-logger
+ConditionPathExists=/home/root/lichtschranke/scripts/bats.py
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/scripts
+ExecStart=/usr/bin/python bats.py
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

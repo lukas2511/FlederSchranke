@@ -1,0 +1,13 @@
+[Unit]
+Description=sms
+ConditionPathExists=/home/root/lichtschranke/sms/sms.sh
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/sms
+ExecStart=/bin/bash sms.sh
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

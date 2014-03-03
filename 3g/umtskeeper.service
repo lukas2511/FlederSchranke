@@ -1,0 +1,13 @@
+[Unit]
+Description=umtskeeper
+ConditionPathExists=/home/root/lichtschranke/3g/umtskeeper
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/3g
+ExecStart=/home/root/lichtschranke/3g/umtskeeper
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

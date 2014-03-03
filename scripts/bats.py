@@ -26,6 +26,10 @@ handler.setFormatter(formatter)
 logger.addHandler(handler);
 
 def setDTR(state):
+    if not os.path.exists("/sys/class/gpio/gpio9"):
+        os.system("echo 9 > /sys/class/gpio/export")
+        os.system("echo out > /sys/class/gpio/gpio9/direction")
+
     if state == 1:
         os.system("echo 1 > /sys/class/gpio/gpio9/value")
     else:
