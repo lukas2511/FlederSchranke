@@ -4,7 +4,9 @@ import time
 from config import number
 
 print number
- 
+
+time.sleep(30) # 30 sekunden warten, stick hat evtl. noch keine verbindung
+
 dongle = serial.Serial(port="/dev/ttyUSB1",baudrate=115200,timeout=0,rtscts=0,xonxoff=0)
  
 def sendatcmd(cmd):
