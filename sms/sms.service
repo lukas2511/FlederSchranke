@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/sms/sms.sh
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/sms
 ExecStart=/bin/bash sms.sh
+StandardOutput=journal
 Restart=always
 RestartSec=30
 

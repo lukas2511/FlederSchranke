@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/openvpn/client.conf
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/openvpn
 ExecStart=/usr/local/sbin/openvpn --config client.conf
+StandardOutput=journal
 Restart=always
 RestartSec=30
 

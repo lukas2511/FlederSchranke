@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/3g/checkweb.py
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/3g
 ExecStart=/usr/bin/python checkweb.py
+StandardOutput=journal
 Restart=always
 RestartSec=30
 

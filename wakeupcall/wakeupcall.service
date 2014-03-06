@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/wakeupcall/wakeupcall.py
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/wakeupcall
 ExecStart=/usr/bin/python wakeupcall.py
+StandardOutput=journal
 Restart=on-failure
 
 [Install]

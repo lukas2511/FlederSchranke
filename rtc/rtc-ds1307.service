@@ -6,6 +6,7 @@ Type=simple
 WorkingDirectory=/home/root/lichtschranke/rtc
 ExecStart=/bin/bash clock_init.sh
 SyslogIdentifier=rtc_ds1307
+StandardOutput=journal
  
 [Install]
 WantedBy=multi-user.target

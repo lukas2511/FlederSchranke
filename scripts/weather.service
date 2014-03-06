@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/scripts/weather.py
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/scripts
 ExecStart=/usr/bin/python weather.py
+StandardOutput=journal
 Restart=always
 RestartSec=30
 

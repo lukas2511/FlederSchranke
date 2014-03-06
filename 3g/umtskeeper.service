@@ -6,6 +6,7 @@ ConditionPathExists=/home/root/lichtschranke/3g/umtskeeper
 Type=simple
 WorkingDirectory=/home/root/lichtschranke/3g
 ExecStart=/home/root/lichtschranke/3g/umtskeeper
+StandardOutput=journal
 Restart=always
 RestartSec=30
 
