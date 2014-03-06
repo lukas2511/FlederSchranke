@@ -1,0 +1,13 @@
+[Unit]
+Description=LED-Control
+ConditionPathExists=/home/root/lichtschranke/leds/leds.py
+
+[Service]
+Type=simple
+WorkingDirectory=/home/root/lichtschranke/leds
+ExecStart=/usr/bin/python leds.py
+StandardOutput=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
