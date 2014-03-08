@@ -10,6 +10,8 @@
 
 //#define DUMMY
 #define USE_TX_BUFFER
+#define ENABLE_PULLUPS
+#define MICROS_OVERFLOW 1800000000
 
 #define BAUD 115200UL
 #define UBRR_VAL ((F_CPU+BAUD*8)/(BAUD*16)-1);
@@ -171,27 +173,41 @@ unsigned long micros() {
 
 void init_registers() {
     DDRA  &= 255;
-    PORTA |= 255;
     DDRB  &= 255;
-    PORTB |= 255;
     DDRC  &= 255;
-    PORTC |= 255;
     DDRD  &= 255 & ~(_UV(4) | _UV(5) | _UV(6));
-    PORTD |= 255 & ~(_UV(4) | _UV(5) | _UV(6));
     DDRE  &= 255 & ~(_UV(0) | _UV(1) | _UV(2) | _UV(6) | _UV(7));
-    PORTE |= 255 & ~(_UV(0) | _UV(1) | _UV(2) | _UV(6) | _UV(7));
     DDRF  &= 255;
-    PORTF |= 255;
     DDRG  &= 255 & ~(_UV(3) | _UV(4) | _UV(6) | _UV(7));
-    PORTG |= 255 & ~(_UV(3) | _UV(4) | _UV(6) | _UV(7));
     DDRH  &= 255 & ~(_UV(2) | _UV(7));
-    PORTH |= 255 & ~(_UV(2) | _UV(7));
     DDRJ  &= 255 & ~(_UV(2) | _UV(3) | _UV(4) | _UV(5) | _UV(6) | _UV(7));
-    PORTJ |= 255 & ~(_UV(2) | _UV(3) | _UV(4) | _UV(5) | _UV(6) | _UV(7));
     DDRK  &= 255;
-    PORTK |= 255;
     DDRL  &= 255;
+#ifdef ENABLE_PULLUPS
+    PORTA |= 255;
+    PORTB |= 255;
+    PORTC |= 255;
+    PORTD |= 255 & ~(_UV(4) | _UV(5) | _UV(6));
+    PORTE |= 255 & ~(_UV(0) | _UV(1) | _UV(2) | _UV(6) | _UV(7));
+    PORTF |= 255;
+    PORTG |= 255 & ~(_UV(3) | _UV(4) | _UV(6) | _UV(7));
+    PORTH |= 255 & ~(_UV(2) | _UV(7));
+    PORTJ |= 255 & ~(_UV(2) | _UV(3) | _UV(4) | _UV(5) | _UV(6) | _UV(7));
+    PORTK |= 255;
     PORTL |= 255;
+#else
+    PORTA &= 255;
+    PORTB &= 255;
+    PORTC &= 255;
+    PORTD &= 255 & ~(_UV(4) | _UV(5) | _UV(6));
+    PORTE &= 255 & ~(_UV(0) | _UV(1) | _UV(2) | _UV(6) | _UV(7));
+    PORTF &= 255;
+    PORTG &= 255 & ~(_UV(3) | _UV(4) | _UV(6) | _UV(7));
+    PORTH &= 255 & ~(_UV(2) | _UV(7));
+    PORTJ &= 255 & ~(_UV(2) | _UV(3) | _UV(4) | _UV(5) | _UV(6) | _UV(7));
+    PORTK &= 255;
+    PORTL &= 255;
+#endif
 }
 
 uint8_t tmpj;
@@ -274,7 +290,7 @@ int main() {
             s_putchr('.');
             s_putchr('E');
         }
-        if(microseconds>1800000000){
+        if(microseconds>MICROS_OVERFLOW){
             soft_reset();
         }
         wdt_reset();
