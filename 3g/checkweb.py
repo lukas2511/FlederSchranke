@@ -2,8 +2,8 @@ import urllib2
 import os
 import time
 
-delay = 300 # seconds => 5 minutes
-max_fails = 12 # * 5 minutes => 1 hour
+delay = 180 # seconds => 3 minutes
+max_fails = 4 # * 3 minutes => 12 minutes
 check_url = "http://pass.telekom.de"
 second_check_url = "http://google.de" # just in case pass.telekom.de is down...
 
@@ -24,9 +24,7 @@ def internet_on():
 
 def reconnect():
     try:
-        os.system("systemctl stop umtskeeper.service")
         os.system("/home/root/lichtschranke/3g/sakis3g disconnect")
-        os.system("systemctl start umtskeeper.service")
         cur_fails = 0
         time.sleep(60)
     except:
