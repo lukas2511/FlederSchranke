@@ -1,0 +1,4 @@
+<Files flaskapp.wsgi>
+    Allow from all
+</Files>
+

@@ -8,21 +8,24 @@ while [ -h "$SOURCE" ]; do
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-ssh -o ProxyCommand="ssh colo1.kurz.pw nc %h %p 2> /dev/null" root@10.8.0.3 mount -o remount,rw /
-
 rsync \
     --archive \
     ${DIR}/ \
-    -e 'ssh -o ProxyCommand="ssh colo1.kurz.pw nc %h %p 2> /dev/null"' \
-    root@10.8.0.3:/home/root/lichtschranke/ \
+    -e 'ssh' \
+    --rsync-path='sudo -u batman rsync' \
+    root@nyx.kurz.pw:/var/customers/webs/batman/FlaskApp/ \
     --progress \
+    -c \
     --exclude '*.dtbo' \
     --exclude '*.pyc' \
     --exclude '*.pyo' \
     --exclude '*.pyd' \
     --exclude '.git' \
+    --exclude '.gitignore' \
     --exclude 'sync.sh' \
-    --exclude 'flaskapp' \
+    --exclude 'venv' \
+    --exclude 'config.py.example' \
     --delete
+#    --exclude 'config.py' \
 
-ssh -o ProxyCommand="ssh colo1.kurz.pw nc %h %p 2> /dev/null" root@10.8.0.3 mount -o remount,ro /
+ssh root@nyx.kurz.pw sudo -u batman touch /var/customers/webs/batman/FlaskApp/flaskapp.wsgi

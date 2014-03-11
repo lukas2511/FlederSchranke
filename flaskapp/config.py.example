@@ -1,0 +1,4 @@
+secret_key = 'ultra secret key'
+debug = False
+bats_log_path = "/var/www/bats"
+num_beams = 50
