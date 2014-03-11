@@ -1,8 +1,10 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, make_response
 import os
 import config
 import math
-from datetime import datetime
+import datetime
+import time as pytime
+from sunrise import sun
 app = Flask(__name__)
 
 # index
@@ -17,7 +19,7 @@ def bat_logs():
     for bat_logfile in bat_logs_dirlist:
         bat_log = {}
         bat_log.update({'filename': bat_logfile})
-        bat_log.update({'date': datetime.strptime(bat_logfile[14:], "%Y-%m-%d")})
+        bat_log.update({'date': datetime.datetime(year=int(bat_logfile[14:18]), month=int(bat_logfile[19:21]), day=int(bat_logfile[22:24]))})
         bat_logs_list.update({bat_logfile[14:]: bat_log})
     return bat_logs_list
 
@@ -29,15 +31,31 @@ def get_bit_name(bit):
     else:
         return "A%.2d" % (bit+1)
 
+def get_sunrise(date):
+    date += datetime.timedelta(days=1)
+    s=sun(lat=50.475,long=6.987)
+    sunrise = datetime.datetime.combine(date, s.sunrise(when=date))
+    return int(pytime.mktime(sunrise.timetuple())*1e6)
+
+def get_sunset(date):
+    s=sun(lat=50.475,long=6.987)
+    sunset = datetime.datetime.combine(date, s.sunset(when=date))
+    return int(pytime.mktime(sunset.timetuple())*1e6)
+
+def micros_to_datetime(micros):
+    return datetime.datetime.fromtimestamp(micros/1000000.0)
+
 # calculate flippy (and sticky) bits (for bat-logfiles)
-def get_flippy_bits(bat_logfile_rows):
+def get_flippy_bits(date,bat_logfile_rows):
     # initialise some lists
     flippy_bits = [] # used at the end, contains flippy (and sticky) bits
-    single_flip_counters = [] # count times a bit flipped without keeping the value for a longer time (< 3 samples)
+    single_flip_counters = [] # count times a bit flipped without keeping the value for a longer time (< 2 samples)
     tmp_counters = [] # temporary counter to count how many samples a bit stayed the same value
     bit_counters = [] # count how often a bit is 1 (interrupted or - tested in this case - maybe not working correctly)
     first = True # first row is used to fill lastrow_bits, need some kind of marker
     valid_lines = 0 # count valid lines (excluding error messages about the arduino not working correctly)
+    sunrise = get_sunrise(date)
+    sunset = get_sunset(date)
 
     # set up our lists
     for pos in range(50):
@@ -50,9 +68,10 @@ def get_flippy_bits(bat_logfile_rows):
         # skip over uninteresting rows (error messages)
         if row[26] != 'T' and row[26] != 'I':
             continue
+
         # get bits from line
         row_bits = list(row[45:])
-        if not first:
+        if not first and int(row[28:44]) > sunset and int(row[28:44]) < sunrise:
             for pos in range(50):
                 # if bit is high increment bit_counter (testing for sticky bits)
                 if row_bits[pos] == '1':
@@ -61,16 +80,16 @@ def get_flippy_bits(bat_logfile_rows):
                 if lastrow_bits[pos] == row_bits[pos]:
                     tmp_counters[pos] += 1
                 # if the value changed and didn't stay for at least 3 samples increment the single_flip_counter for this bit
-                elif tmp_counters[pos] < 3:
+                elif tmp_counters[pos] < 2:
                     single_flip_counters[pos] += 1
                     tmp_counters[pos] = 0
                 # if the value changed but stayed at least 3 samples we reset the temporary counter to zero
                 else:
                     tmp_counters[pos] = 0
+            valid_lines += 1
         else:
             first = False
         lastrow_bits = row_bits
-        valid_lines += 1
 
     # for every bit
     for pos in range(50):
@@ -87,7 +106,7 @@ def bat_log_content(bat_log):
     # read logfile (we need no error handling, everything will work! i guess..)
     rows = open("%s/%s" % (config.bats_log_path, bat_log['filename']),"r").read().split("\n")[:-1]
     # get (probable) flippy bits
-    flippy_bits = get_flippy_bits(rows) 
+    flippy_bits = get_flippy_bits(bat_log['date'],rows) 
     # first line just initialises values like lastrow and lasttime, we need some kind of marker for this
     first = True 
     lasttime = 9999999999999999 # dirty "hack", saves a few rows of code :)
@@ -98,6 +117,9 @@ def bat_log_content(bat_log):
     A_to_B = 0
     B_to_A = 0
     WAT = 0
+    # get sunrise/sunset times
+    sunrise = get_sunrise(bat_log['date'])
+    sunset = get_sunset(bat_log['date'])
     # initialise content-"buffer"
     content = ""
     for row in rows:
@@ -149,7 +171,7 @@ def bat_log_content(bat_log):
         # put row together
         row = "%s%s %s" % (row[:45], "".join(row_bits[0:((config.num_beams/2)-1)]), "".join(row_bits[(config.num_beams/2):(config.num_beams-1)]))
         # if there were any changes throw the row at the user
-        if not first and row[45:] != lastrow[45:] and row[45:].count('1')>1:
+        if not first and row[45:] != lastrow[45:] and row[45:].count('1')>1 and int(row[28:44]) > sunset and int(row[28:44]) < sunrise:
             time = int(row[28:44])
             if (time - lasttime) > 3e6: # if over 3 seconds nothing happened we can assume that there is no bat inside
                 # try to guess what happened in this block
@@ -211,7 +233,7 @@ def bat_log_content(bat_log):
             first = False
         lastrow = row
 
-    header = "Flippy Bits: %s\nA -> B: %d\nB -> A: %d\n??????: %d\n" % (', '.join(get_bit_name(x) for x in flippy_bits), A_to_B, B_to_A, WAT)
+    header = "Flippy Bits: %s\nA -> B: %d\nB -> A: %d\n??????: %d\nSonnenuntergang: %s\nSonnenaufgang: %s\n<a href='/bats/%.4d/%.2d/%.2d/raw'>Rohdaten herunterladen</a>\n" % (', '.join(get_bit_name(x) for x in flippy_bits), A_to_B, B_to_A, WAT, str(micros_to_datetime(sunset)), str(micros_to_datetime(sunrise)), bat_log['date'].year, bat_log['date'].month, bat_log['date'].day)
     header+= "                                             Innen (A)%sAu&szlig;en (B)" % "".ljust(config.num_beams/2-9)
     return "%s\n%s" % (header, content)
 
@@ -260,6 +282,20 @@ def bat_log_view(year,month,day):
     h1+= '%.2d' % day
     title = "%.4d-%.2d-%.2d" % (year,month,day)
     return render_template('bats/log.tpl', bat_log_content=bat_log_content(bat_log), title=title, h1=h1)
+
+# download raw bat-log of a specific day
+@app.route("/bats/<int:year>/<int:month>/<int:day>/raw")
+def bat_log_raw(year,month,day):
+    bat_logs_list = bat_logs()
+    if not "%.4d-%.2d-%.2d" % (year,month,day) in bat_logs_list:
+        abort(404)
+
+    bat_log = bat_logs_list["%.4d-%.2d-%.2d" % (year,month,day)]
+    raw = open("%s/%s" % (config.bats_log_path, bat_log['filename']),"r").read()
+    response = make_response(raw)
+    response.headers["Content-Disposition"] = "attachment; filename=flederlog_%.4d_%.2d_%.2d.txt" % (year,month,day)
+    response.headers["Content-Type"] = "text/plain"
+    return response
 
 if __name__ == "__main__":
     import config
