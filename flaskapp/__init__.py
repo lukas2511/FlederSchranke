@@ -80,7 +80,7 @@ def get_flippy_bits(date,bat_logfile_rows):
                 if lastrow_bits[pos] == row_bits[pos]:
                     tmp_counters[pos] += 1
                 # if the value changed and didn't stay for at least 3 samples increment the single_flip_counter for this bit
-                elif tmp_counters[pos] < 2:
+                elif tmp_counters[pos] < 3:
                     single_flip_counters[pos] += 1
                     tmp_counters[pos] = 0
                 # if the value changed but stayed at least 3 samples we reset the temporary counter to zero
@@ -173,7 +173,7 @@ def bat_log_content(bat_log):
         # if there were any changes throw the row at the user
         if not first and row[45:] != lastrow[45:] and row[45:].count('1')>1 and int(row[28:44]) > sunset and int(row[28:44]) < sunrise:
             time = int(row[28:44])
-            if (time - lasttime) > 3e6: # if over 3 seconds nothing happened we can assume that there is no bat inside
+            if (time - lasttime) > 1e6: # if over 1 second nothing happened we can assume that there is no bat inside
                 # try to guess what happened in this block
                 interrupts = {'A': [], 'B': []}
                 for line in block:
