@@ -5,7 +5,7 @@ from logging.handlers import BaseRotatingHandler as BaseRotatingShitHandler
 import pytz
 
 class TimedRotatingShitHandler(BaseRotatingShitHandler):
-    def __init__(self, filename, hour=12, minute=0, backupCount=0, encoding=None, delay=False, utc=False):
+    def __init__(self, filename, hour=8, minute=0, backupCount=0, encoding=None, delay=False, utc=False):
         BaseRotatingShitHandler.__init__(self, filename, 'a', encoding, delay)
 
         self.delay = delay

@@ -14,7 +14,7 @@ LOG_FILENAME = '/home/root/logs/weather/weatherlog.txt'
 logger = logging.getLogger('MyLogger')
 logger.setLevel(logging.INFO)
 
-handler = TimedRotatingShitHandler(LOG_FILENAME, hour=12, minute=0, backupCount=60, delay=False)
+handler = TimedRotatingShitHandler(LOG_FILENAME, hour=8, minute=0, backupCount=60, delay=False)
 formatter = logging.Formatter("%(asctime)s - %(message)s")
 
 handler.setFormatter(formatter)

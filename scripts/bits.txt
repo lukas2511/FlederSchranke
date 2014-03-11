@@ -1,3 +1,6 @@
+innen: A
+aussen: B
+
 0:
 1:
 2:
