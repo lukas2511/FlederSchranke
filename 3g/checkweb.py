@@ -7,8 +7,8 @@ delay = 180 # seconds => 3 minutes
 max_fails = 4 # * 3 minutes => 12 minutes
 max_hard_fails = 960 # * 3 minutes => 2 days
 
-check_url = "http://pass.telekom.de"
-second_check_url = "http://google.de" # just in case pass.telekom.de is down...
+check_url = "http://pass.telekom.de/home?continue=true"
+second_check_url = "http://test.kurz.pw/test.html" # just in case pass.telekom.de is down...
 
 cur_fails = 0
 cur_hard_fails = 0

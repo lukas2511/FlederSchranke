@@ -106,7 +106,8 @@ def bat_log_content(bat_log):
     # read logfile (we need no error handling, everything will work! i guess..)
     rows = open("%s/%s" % (config.bats_log_path, bat_log['filename']),"r").read().split("\n")[:-1]
     # get (probable) flippy bits
-    flippy_bits = get_flippy_bits(bat_log['date'],rows) 
+#    flippy_bits = get_flippy_bits(bat_log['date'],rows) 
+    flippy_bits = [3,6,11,15]
     # first line just initialises values like lastrow and lasttime, we need some kind of marker for this
     first = True 
     lasttime = 9999999999999999 # dirty "hack", saves a few rows of code :)
