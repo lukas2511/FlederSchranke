@@ -1,0 +1,7 @@
+*.hex
+*.elf
+flaskapp/config.py
+flaskapp/venv
+openvpn/keys
+*.py[cod]
+wakeupcall/config.py
